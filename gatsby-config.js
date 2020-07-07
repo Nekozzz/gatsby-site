@@ -33,8 +33,8 @@ module.exports = {
     {
       resolve: "gatsby-source-graphql",
       options: {
-        typeName: "Hasura",
-        fieldName: "Hasura",
+        typeName: "hasura",
+        fieldName: "hasura",
         // Create Apollo Link manually. Can return a Promise.
         createLink: pluginOptions => {
           return createHttpLink({

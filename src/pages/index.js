@@ -8,20 +8,31 @@ import SEO from "../components/seo"
 const IndexPage = () => {
     const data = useStaticQuery(graphql`
     query MyQuery {
-      Hasura {
-        articles_categories(limit: 1) {
-          created_at
-          id
-          updated_at
-          category_id
-        }
-      }
+       hasura {
+          articles {
+            id
+            slug
+            title
+          }
+       }
     }
   `);
 
     return (
       <Layout>
-          data {data.Hasura.articles_categories[0].created_at}
+        Статьи
+        <div>
+           {
+             data.hasura.articles.map((article)=>{
+                 return (
+                     <div>
+                         <a href={'/article/' + article.slug}>{article.title}</a>
+                     </div>
+                 )
+             })
+           }
+        </div>
+
         <SEO title="Home" />
         <h1>Hi people</h1>
         <p>Welcome to your new Gatsby site.</p>
@@ -33,6 +44,6 @@ const IndexPage = () => {
         <Link to="/using-typescript/">Go to "Using TypeScript"</Link>
       </Layout>
     )
-}
+};
 
 export default IndexPage

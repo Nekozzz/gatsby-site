@@ -1,6 +1,3 @@
-const { createHttpLink } = require("@apollo/client");
-const fetch = require("isomorphic-fetch");
-
 module.exports = {
   siteMetadata: {
     title: `Gatsby Default Starter`,
@@ -28,24 +25,6 @@ module.exports = {
         theme_color: `#663399`,
         display: `minimal-ui`,
         icon: `src/images/gatsby-icon.png`, // This path is relative to the root of the site.
-      },
-    },
-    {
-      resolve: "gatsby-source-graphql",
-      options: {
-        typeName: "hasura",
-        fieldName: "hasura",
-        // Create Apollo Link manually. Can return a Promise.
-        createLink: pluginOptions => {
-          return createHttpLink({
-            uri: "https://gql-2.test.serafim.help/v1/graphql",
-            headers: {
-              "x-hasura-admin-secret":
-                '123-123-123-123-123',
-            },
-            fetch,
-          })
-        },
       },
     },
     // this (optional) plugin enables Progressive Web App + Offline functionality

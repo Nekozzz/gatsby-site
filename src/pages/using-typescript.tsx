@@ -1,5 +1,4 @@
 // If you don't want to use TypeScript you can delete this file!
-// @ts-ignore
 import React from "react"
 import { PageProps, Link, graphql } from "gatsby"
 

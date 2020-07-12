@@ -1,49 +1,94 @@
 import React from "react"
-import {graphql, Link, useStaticQuery} from "gatsby"
+// import { Link } from "gatsby"
+
+import {useQuery} from "@apollo/react-hooks";
+import gql from "graphql-tag"
 
 import Layout from "../components/layout"
-import Image from "../components/image"
+import { Pagination } from 'antd';
 import SEO from "../components/seo"
+// import Image from "../components/image"
+
+
+const APOLLO_QUERY = gql`
+  query IndexQuery($limit: Int, $offset: Int) {
+    car_model(limit: $limit, offset: $offset) {
+      model_name
+      slug
+      model_description
+      car_brand {
+        brand_name
+      }
+    }
+    car_model_aggregate {
+      aggregate {
+        count(columns: car_brand_id)
+      }
+    }
+  }
+`;
 
 const IndexPage = () => {
-    const data = useStaticQuery(graphql`
-    query MyQuery {
-       hasura {
-          articles {
-            id
-            slug
-            title
-          }
-       }
+  const limit = 2,
+    defaultPage = 1,
+    defaultPageSize = 2;
+
+  const pageChange = num => {
+    onLoadMore(num);
+  };
+
+
+
+  const {fetchMore, data, loading, error} = useQuery(
+    APOLLO_QUERY,
+    {
+      variables: {
+        offset: 0,
+        limit: limit
+      },
+      fetchPolicy: "cache-and-network"
     }
-  `);
+  );
 
-    return (
-      <Layout>
-        Статьи
-        <div>
-           {
-             data.hasura.articles.map((article)=>{
-                 return (
-                     <div>
-                         <a href={'/article/' + article.slug}>{article.title}</a>
-                     </div>
-                 )
-             })
-           }
-        </div>
+  console.log('!!!', {loading, error, data});
 
-        <SEO title="Home" />
-        <h1>Hi people</h1>
-        <p>Welcome to your new Gatsby site.</p>
-        <p>Now go build something great.</p>
-        <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
-          <Image />
-        </div>
-        <Link to="/page-2/">Go to page 2</Link> <br />
-        <Link to="/using-typescript/">Go to "Using TypeScript"</Link>
-      </Layout>
-    )
+  const onLoadMore = (num) => {
+    fetchMore({
+      variables: {
+        offset: (num - 1) * limit,
+        limit: 2
+      },
+      updateQuery: (previousResult, { fetchMoreResult }) => {
+        if (!fetchMoreResult) {
+          return previousResult;
+        }
+        return fetchMoreResult
+      }
+    });
+  };
+
+  return (
+    <Layout>
+      <SEO title="Home" />
+      i'm
+      {
+        !loading && data && data.car_model.map(car => (
+          <div key={car.slug}>
+            {car.car_brand.brand_name}
+            {car.model_name}
+            {car.model_description}
+          </div>
+        ))
+      }
+
+      <Pagination
+        defaultCurrent={defaultPage}
+        defaultPageSize={defaultPageSize}
+        total={!loading && data && data.car_model_aggregate.aggregate.count}
+        onChange={pageChange}
+      />
+    </Layout>
+  )
 };
 
 export default IndexPage

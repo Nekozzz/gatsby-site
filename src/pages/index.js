@@ -4,8 +4,8 @@ import React from "react"
 import {useQuery} from "@apollo/react-hooks";
 import gql from "graphql-tag"
 
-import Layout from "../components/layout"
-import { Pagination } from 'antd';
+import SiteLayout from "../components/SiteLayout"
+import {Menu, Pagination} from 'antd';
 import SEO from "../components/seo"
 // import Image from "../components/image"
 
@@ -28,6 +28,8 @@ const APOLLO_QUERY = gql`
   }
 `;
 
+let totalPages;
+
 const IndexPage = () => {
   const limit = 2,
     defaultPage = 1,
@@ -46,9 +48,12 @@ const IndexPage = () => {
         offset: 0,
         limit: limit
       },
-      fetchPolicy: "cache-and-network"
+      fetchPolicy: "cache-first"
     }
   );
+
+  totalPages = !loading && data ? data.car_model_aggregate.aggregate.count : totalPages || null
+
 
   console.log('!!!', {loading, error, data});
 
@@ -58,6 +63,7 @@ const IndexPage = () => {
         offset: (num - 1) * limit,
         limit: 2
       },
+      fetchPolicy: "cache-first",
       updateQuery: (previousResult, { fetchMoreResult }) => {
         if (!fetchMoreResult) {
           return previousResult;
@@ -68,26 +74,37 @@ const IndexPage = () => {
   };
 
   return (
-    <Layout>
+    <SiteLayout sidebarItem={
+      <Menu.Item key="1">
+        Главная страница
+      </Menu.Item>
+    }>
       <SEO title="Home" />
-      i'm
       {
-        !loading && data && data.car_model.map(car => (
-          <div key={car.slug}>
-            {car.car_brand.brand_name}
-            {car.model_name}
-            {car.model_description}
-          </div>
-        ))
+        totalPages &&
+        <Pagination
+          defaultCurrent={defaultPage}
+          defaultPageSize={defaultPageSize}
+          total={totalPages}
+          onChange={pageChange}
+        />
       }
 
-      <Pagination
-        defaultCurrent={defaultPage}
-        defaultPageSize={defaultPageSize}
-        total={!loading && data && data.car_model_aggregate.aggregate.count}
-        onChange={pageChange}
-      />
-    </Layout>
+      {
+        !loading && data && data.car_model.map(car => (
+            <div key={car.slug}>
+              {car.car_brand.brand_name}
+              <br/>
+              {car.model_name}
+              <br/>
+              {car.model_description}
+              <hr />
+            </div>
+          )
+        )
+      }
+
+    </SiteLayout>
   )
 };
 

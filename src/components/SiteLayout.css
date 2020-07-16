@@ -620,3 +620,22 @@ pre tt:after {
     font-size: 100%;
   }
 }
+
+
+#___gatsby {
+  height: 100%;
+}
+
+#gatsby-focus-wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.main-container {
+  flex-grow: 1;
+}
+
+footer {
+  background-color: #e6e6e6;
+}

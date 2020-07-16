@@ -9,14 +9,25 @@
 const path = require(`path`);
 exports.createPages = async ({ graphql, actions, reporter }) => {
   const { createPage } = actions;
-  const PageContentTemplate = path.resolve("./src/templates/PageContent.js");
+  const templatePageCategory = path.resolve("./src/templates/PageCategory.js");
+  const templatePageMore = path.resolve("./src/templates/PageMore.js");
+
   const result = await graphql(`
     {
       hasura {
         car_brands {
           id
           slug
-          brand_name
+        }
+        car_model {
+          slug
+          model_name
+          model_description
+          id
+          car_brand_id
+          car_brand {
+            slug
+          }
         }
       }
     }
@@ -31,11 +42,22 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   carBrands.forEach(carBrand => {
     createPage({
       path: `${carBrand.slug}`,
-      component: PageContentTemplate,
+      component: templatePageCategory,
       context: {
         id: carBrand.id,
       },
     })
-  })
+  });
+
+  const carModels = result.data.hasura.car_model;
+  carModels.forEach(carModel => {
+    createPage({
+      path: `${carModel.car_brand.slug}/${carModel.slug}`,
+      component: templatePageMore,
+      context: {
+        car_id: carModel.id
+      },
+    })
+  });
 
 };

@@ -1,23 +1,27 @@
 import React from "react"
-// import { Link } from "gatsby"
 
 import {useQuery} from "@apollo/react-hooks";
 import gql from "graphql-tag"
 
 import SiteLayout from "../components/SiteLayout"
-import {Menu, Pagination} from 'antd';
+import ItemShort from "../components/Item/ItemShort"
+import { Pagination} from 'antd';
 import SEO from "../components/seo"
+import {graphql, useStaticQuery} from "gatsby";
 // import Image from "../components/image"
+import Img from "gatsby-image"
 
 
 const APOLLO_QUERY = gql`
   query IndexQuery($limit: Int, $offset: Int) {
     car_model(limit: $limit, offset: $offset) {
+      id
       model_name
       slug
       model_description
       car_brand {
         brand_name
+        slug
       }
     }
     car_model_aggregate {
@@ -28,20 +32,18 @@ const APOLLO_QUERY = gql`
   }
 `;
 
+
 let totalPages;
 
 const IndexPage = () => {
-  const limit = 2,
-    defaultPage = 1,
-    defaultPageSize = 2;
+  const limit = 4,
+    defaultPage = 1;
 
   const pageChange = num => {
     onLoadMore(num);
   };
 
-
-
-  const {fetchMore, data, loading, error} = useQuery(
+  const {fetchMore, data: apolloData, loading, error} = useQuery(
     APOLLO_QUERY,
     {
       variables: {
@@ -52,16 +54,14 @@ const IndexPage = () => {
     }
   );
 
-  totalPages = !loading && data ? data.car_model_aggregate.aggregate.count : totalPages || null
-
-
-  console.log('!!!', {loading, error, data});
+  totalPages = !loading && apolloData ? apolloData.car_model_aggregate.aggregate.count : totalPages || null;
+  console.log('!!!', {loading, error, apolloData});
 
   const onLoadMore = (num) => {
     fetchMore({
       variables: {
         offset: (num - 1) * limit,
-        limit: 2
+        limit: limit
       },
       fetchPolicy: "cache-first",
       updateQuery: (previousResult, { fetchMoreResult }) => {
@@ -74,32 +74,21 @@ const IndexPage = () => {
   };
 
   return (
-    <SiteLayout sidebarItem={
-      <Menu.Item key="1">
-        Главная страница
-      </Menu.Item>
-    }>
-      <SEO title="Home" />
+    <SiteLayout>
+    <SEO title="Home" />
       {
         totalPages &&
         <Pagination
           defaultCurrent={defaultPage}
-          defaultPageSize={defaultPageSize}
+          defaultPageSize={limit}
           total={totalPages}
           onChange={pageChange}
         />
       }
 
       {
-        !loading && data && data.car_model.map(car => (
-            <div key={car.slug}>
-              {car.car_brand.brand_name}
-              <br/>
-              {car.model_name}
-              <br/>
-              {car.model_description}
-              <hr />
-            </div>
+        !loading && apolloData && apolloData.car_model.map((car, i) => (
+          <ItemShort car={car} key={i} />
           )
         )
       }

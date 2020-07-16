@@ -10,12 +10,12 @@ import PropTypes from "prop-types"
 import {useStaticQuery, graphql, Link} from "gatsby"
 import Header from "./header"
 import 'antd/dist/antd.css'
-import "./layout.css"
+import "./SiteLayout.css"
 import {Layout, Menu} from "antd";
 const { Sider, Content } = Layout;
 
 
-const SiteLayout = ({ children, sidebarItem }) => {
+const SiteLayout = ({ children, selectedMenuItem = 'main'}) => {
   const data = useStaticQuery(graphql`
     query Asm {
       site {
@@ -56,11 +56,10 @@ const SiteLayout = ({ children, sidebarItem }) => {
   return (
     <>
       <Header siteTitle={data.site.siteMetadata.title}/>
-
-      <main>
+      <main className={'main-container'}>
         <Layout>
           <Sider theme={'light'}>
-            <Menu mode="inline" defaultSelectedKeys={['main']} onOpenChange>
+            <Menu mode="inline" selectedKeys={selectedMenuItem}>
               <Menu.Item key={'main'}>
                 <Link to={'/'}>
                   Главная страница
@@ -68,7 +67,10 @@ const SiteLayout = ({ children, sidebarItem }) => {
               </Menu.Item>
               {
                 data.hasura.car_brands.map((carBrand) => (
-                  <Menu.Item key={carBrand.slug}>
+                  <Menu.Item key={carBrand.slug} style={{
+                      'display': 'flex',
+                      'flexDirection': 'column',
+                    }}>
                     <Link to={'/'+carBrand.slug}>
                       {carBrand.brand_name}
                     </Link>

@@ -44,7 +44,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       path: `${carBrand.slug}`,
       component: templatePageCategory,
       context: {
-        id: carBrand.id,
+        car_brand_id: carBrand.id,
       },
     })
   });
@@ -59,5 +59,36 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
       },
     })
   });
-
 };
+
+
+/*
+// Implement the Gatsby API “onCreatePage”. This is
+// called after every page is created.
+exports.onCreatePage = async ({ page, actions }) => {
+  console.log('onCreatePage', {page, actions});
+  const { createPage } = actions
+  // Only update the `/app` page.
+  if (page.path.match(/^\/rou/)) {
+    // page.matchPath is a special key that's used for matching pages
+    // with corresponding routes only on the client.
+    page.matchPath = "/rou/!*"
+    // Update the page.
+    createPage(page)
+  }
+}
+
+exports.onCreatePage = async ({ page, actions }) => {
+  const { createPage, deletePage } = actions
+  // Check if the page is a localized 404
+  if (page.path.match(/^\/[a-z]{2}\/lox\/$/)) {
+    const oldPage = { ...page }
+    // Get the language code from the path, and match all paths
+    // starting with this code (apart from other valid paths)
+    const langCode = page.path.split(`/`)[1]
+    page.matchPath = `/${langCode}/!*`
+    // Recreate the modified page
+    deletePage(oldPage)
+    createPage(page)
+  }
+}*/

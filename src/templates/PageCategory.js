@@ -1,133 +1,134 @@
-import React from "react"
+import React, { useState } from "react"
+import {Pagination} from "antd";
+
 import { graphql } from "gatsby"
+import gql from "graphql-tag"
+
+import {useQuery, useLazyQuery} from "@apollo/react-hooks";
 import SiteLayout from "../components/SiteLayout.js"
 import SEO from "../components/seo"
-import {Pagination} from "antd";
-import {useQuery} from "@apollo/react-hooks";
-import gql from "graphql-tag"
 import ItemShort from "../components/Item/ItemShort";
 
 export const query = graphql`
-  query($id: Int!) {
+  query($car_brand_id: Int!) {
     hasura {
-      car_brands(where: {id: {_eq: $id}}) {
+      car_model(where: {car_brand_id: {_eq: $car_brand_id}}) {
+        id
         slug
+        model_name
+        model_description
+        car_brand {
+          brand_name
+          slug
+        }
+      }
+      car_model_aggregate(where: {car_brand_id: {_eq: $car_brand_id}}) {
+        aggregate {
+          max {
+            updated_at
+          }
+          count(columns: car_brand_id)
+        }
       }
     }
   }
 `;
 
-const APOLLO_QUERY = gql`
-  query IndexQuery($limit: Int, $offset: Int, $car_brand_id: Int) {
-    car_model(where: {car_brand_id: {_eq: $car_brand_id}}, limit: $limit, offset: $offset) {
-      id
-      slug
-      model_name
-      model_description
-      car_brand {
-        brand_name
-        slug
-      }
-    }
+const APOLLO_QUERY_CAR_MODEL_LAST_UPDATE = gql`
+  query APOLLO_QUERY_CAR_MODEL_LAST_UPDATE($car_brand_id: Int) {
     car_model_aggregate(where: {car_brand_id: {_eq: $car_brand_id}}) {
       aggregate {
-        count(columns: car_brand_id)
+        max {
+          updated_at
+        }
       }
     }
   }
 `;
 
-let totalPages;
+const APOLLO_QUERY_CAR_MODEL_UPDATER = gql`
+  query APOLLO_QUERY_CAR_MODEL_UPDATER($car_brand_id: Int) {
+      car_model(where: {car_brand_id: {_eq: $car_brand_id}}) {
+        id
+        slug
+        model_name
+        model_description
+        car_brand {
+          brand_name
+          slug
+        }
+      }
+      car_model_aggregate(where: {car_brand_id: {_eq: $car_brand_id}}) {
+        aggregate {
+          max {
+            updated_at
+          }
+          count(columns: car_brand_id)
+        }
+      }
+  }
+`;
 
-const PageCategory = ({ pageContext, data }) => {
-  const limit = 2,
-    defaultPage = 1;
+const PageCategory = ({ pageContext, data: graphqlData }) => {
+  const [pageData, setPageData] = useState(graphqlData.hasura);
+  const [paginationCurrent, setPaginationCurrent] = useState(1);
+  let paginationSize = 2;
+  let paginationTotal = pageData.car_model_aggregate.aggregate.count;
 
-  const pageChange = num => {
-    onLoadMore(num);
+  const onPaginationCurrent = (num) => {
+    setPaginationCurrent(num);
   };
 
-  const {fetchMore, data: apolloData, loading, error} = useQuery(
-    APOLLO_QUERY,
+  const {data: useQueryData, loading: useQueryLoading} = useQuery(
+    APOLLO_QUERY_CAR_MODEL_LAST_UPDATE,
     {
       variables: {
-        car_brand_id: pageContext.id,
-        offset: 0,
-        limit: limit
+        car_brand_id: pageContext.car_brand_id,
       },
       fetchPolicy: "cache-first"
     }
   );
 
-  totalPages = !loading && apolloData ? apolloData.car_model_aggregate.aggregate.count : totalPages || null;
+  const [forceUpdate, { loading: useLazyQueryLoading, data: useLazyQueryData }] = useLazyQuery(APOLLO_QUERY_CAR_MODEL_UPDATER);
 
-  console.log('!!!', {loading, error, apolloData});
+  if (!useQueryLoading && !useQueryLoading) {
+    if (Date.parse(pageData.car_model_aggregate.aggregate.max.updated_at) < Date.parse(useQueryData.car_model_aggregate.aggregate.max.updated_at)) {
 
-  const onLoadMore = (num) => {
-    fetchMore({
-      variables: {
-        offset: (num - 1) * limit,
-        limit: 2
-      },
-      fetchPolicy: "cache-first",
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult) {
-          return previousResult;
-        }
-        return fetchMoreResult
+      if (!useLazyQueryLoading && !useLazyQueryData) {
+        forceUpdate({
+          variables: {
+            car_brand_id: pageContext.car_brand_id,
+          },
+          fetchPolicy: "cache-first"
+        })
       }
-    });
-  };
+
+      if (!useLazyQueryLoading && useLazyQueryData) {
+        setPageData(useLazyQueryData);
+      }
+    }
+  }
 
   return (
-    <SiteLayout selectedMenuItem={data.hasura.car_brands[0].slug}>
+    <SiteLayout selectedMenuItem={pageData.car_model[0].car_brand.slug}>
       <SEO title="Home" />
-      {
-        totalPages &&
-        <Pagination
-          defaultCurrent={defaultPage}
-          defaultPageSize={limit}
-          total={totalPages}
-          onChange={pageChange}
-        />
-      }
+
+      <Pagination
+        current={paginationCurrent}
+        defaultPageSize={paginationSize}
+        total={paginationTotal}
+        onChange={onPaginationCurrent}
+      />
 
       {
-        !loading && apolloData && apolloData.car_model.map((car, i) => (
-            <ItemShort car={car} key={i} />
-          )
-        )
+        pageData.car_model.map((car, i) => {
+          if ( !(i < (paginationCurrent * paginationSize - paginationSize)) && !(i >= (paginationCurrent * paginationSize)) ) {
+            return <ItemShort car={car} key={i} />
+          }
+        })
       }
-
     </SiteLayout>
   )
-
-  //   < SiteLayout >
-  //   < SEO
-  // title = {data.hasura.car_model[0].model_name}
-  // />
-  // <Content className="site-layout-background">
-  //   {
-  //     totalPages &&
-  //     <Pagination
-  //       defaultCurrent={defaultPage}
-  //       defaultPageSize={defaultPageSize}
-  //       total={totalPages}
-  //       onChange={pageChange}
-  //     />
-  //   }
-  //   {
-  //     data.hasura.car_model.map(car_model => (
-  //       <div key={car_model.slug}>
-  //         {car_model.model_name}
-  //         <br/>
-  //         {car_model.model_description}
-  //         <hr/>
-  //       </div>
-  //     ))
-  //   }
-  // </Content>
-  // < /SiteLayout>
 };
 
 

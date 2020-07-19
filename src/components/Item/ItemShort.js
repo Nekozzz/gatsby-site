@@ -7,7 +7,7 @@ const ItemShort = ({car}) => {
     <div key={car.slug}>
       <div>
         {car && (
-          <img src={`http://lorempixel.com/460/230/transport/${car.id}/`} alt=""/>
+          <img className={'img-preview'} src={`http://lorempixel.com/460/230/transport/${car.id}/`} alt=""/>
         )}
       </div>
       <div>

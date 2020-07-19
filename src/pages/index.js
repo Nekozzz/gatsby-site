@@ -1,100 +1,135 @@
-import React from "react"
+import React, { useState } from "react"
+import {Pagination} from "antd";
 
-import {useQuery} from "@apollo/react-hooks";
+import { graphql } from "gatsby"
 import gql from "graphql-tag"
 
-import SiteLayout from "../components/SiteLayout"
-import ItemShort from "../components/Item/ItemShort"
-import { Pagination} from 'antd';
+import {useQuery, useLazyQuery} from "@apollo/react-hooks";
+import SiteLayout from "../components/SiteLayout.js"
 import SEO from "../components/seo"
-import {graphql, useStaticQuery} from "gatsby";
-// import Image from "../components/image"
-import Img from "gatsby-image"
+import ItemShort from "../components/Item/ItemShort";
 
-
-const APOLLO_QUERY = gql`
-  query IndexQuery($limit: Int, $offset: Int) {
-    car_model(limit: $limit, offset: $offset) {
-      id
-      model_name
-      slug
-      model_description
-      car_brand {
-        brand_name
+export const query = graphql`
+  query {
+    hasura {
+      car_model {
+        id
         slug
+        model_name
+        model_description
+        car_brand {
+          brand_name
+          slug
+        }
       }
-    }
-    car_model_aggregate {
-      aggregate {
-        count(columns: car_brand_id)
+      car_model_aggregate {
+        aggregate {
+          max {
+            updated_at
+          }
+          count(columns: car_brand_id)
+        }
       }
     }
   }
 `;
 
+const APOLLO_QUERY_CAR_MODEL_LAST_UPDATE = gql`
+  query APOLLO_QUERY_CAR_MODEL_LAST_UPDATE {
+    car_model_aggregate {
+      aggregate {
+        max {
+          updated_at
+        }
+      }
+    }
+  }
+`;
 
-let totalPages;
+const APOLLO_QUERY_CAR_MODEL_UPDATER = gql`
+  query APOLLO_QUERY_CAR_MODEL_UPDATER {
+      car_model {
+        id
+        slug
+        model_name
+        model_description
+        car_brand {
+          brand_name
+          slug
+        }
+      }
+      car_model_aggregate {
+        aggregate {
+          max {
+            updated_at
+          }
+          count(columns: car_brand_id)
+        }
+      }
+  }
+`;
 
-const IndexPage = () => {
-  const limit = 4,
-    defaultPage = 1;
+const PageCategory = ({ pageContext, data: graphqlData }) => {
+  const [pageData, setPageData] = useState(graphqlData.hasura);
+  const [paginationCurrent, setPaginationCurrent] = useState(1);
+  let paginationSize = 4;
+  let paginationTotal = pageData.car_model_aggregate.aggregate.count;
 
-  const pageChange = num => {
-    onLoadMore(num);
+  const onPaginationCurrent = (num) => {
+    setPaginationCurrent(num);
   };
 
-  const {fetchMore, data: apolloData, loading, error} = useQuery(
-    APOLLO_QUERY,
+  const {data: useQueryData, loading: useQueryLoading} = useQuery(
+    APOLLO_QUERY_CAR_MODEL_LAST_UPDATE,
     {
       variables: {
-        offset: 0,
-        limit: limit
+        car_brand_id: pageContext.car_brand_id,
       },
       fetchPolicy: "cache-first"
     }
   );
 
-  totalPages = !loading && apolloData ? apolloData.car_model_aggregate.aggregate.count : totalPages || null;
-  console.log('!!!', {loading, error, apolloData});
+  const [forceUpdate, { loading: useLazyQueryLoading, data: useLazyQueryData }] = useLazyQuery(APOLLO_QUERY_CAR_MODEL_UPDATER);
 
-  const onLoadMore = (num) => {
-    fetchMore({
-      variables: {
-        offset: (num - 1) * limit,
-        limit: limit
-      },
-      fetchPolicy: "cache-first",
-      updateQuery: (previousResult, { fetchMoreResult }) => {
-        if (!fetchMoreResult) {
-          return previousResult;
-        }
-        return fetchMoreResult
+  if (!useQueryLoading && !useQueryLoading) {
+    if (Date.parse(pageData.car_model_aggregate.aggregate.max.updated_at) < Date.parse(useQueryData.car_model_aggregate.aggregate.max.updated_at)) {
+
+      if (!useLazyQueryLoading && !useLazyQueryData) {
+        forceUpdate({
+          variables: {
+            car_brand_id: pageContext.car_brand_id,
+          },
+          fetchPolicy: "cache-first"
+        })
       }
-    });
-  };
+
+      if (!useLazyQueryLoading && useLazyQueryData) {
+        setPageData(useLazyQueryData);
+      }
+    }
+  }
 
   return (
     <SiteLayout>
-    <SEO title="Home" />
-      {
-        totalPages &&
-        <Pagination
-          defaultCurrent={defaultPage}
-          defaultPageSize={limit}
-          total={totalPages}
-          onChange={pageChange}
-        />
-      }
+      <SEO title="Home" />
+
+      <Pagination
+        current={paginationCurrent}
+        defaultPageSize={paginationSize}
+        total={paginationTotal}
+        onChange={onPaginationCurrent}
+      />
 
       {
-        !loading && apolloData && apolloData.car_model.map((car, i) => (
-          <ItemShort car={car} key={i} />
-          )
-        )
+        pageData.car_model.map((car, i) => {
+          if ( !(i < (paginationCurrent * paginationSize - paginationSize)) && !(i >= (paginationCurrent * paginationSize)) ) {
+            return <ItemShort car={car} key={i} />
+          }
+        })
       }
-
     </SiteLayout>
   )
 };
 
-export default IndexPage
+
+export default PageCategory

@@ -636,6 +636,11 @@ pre tt:after {
   flex-grow: 1;
 }
 
+.img-preview {
+  min-height: 230px;
+  background-color: #e6e6e6;
+}
+
 footer {
   background-color: #e6e6e6;
 }

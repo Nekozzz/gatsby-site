@@ -22,8 +22,6 @@ export const query = graphql`
   }
 `;
 
-
-
 const PageMore = ({ data }) => {
   const car = data.hasura.car_model[0];
 

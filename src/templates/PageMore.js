@@ -29,16 +29,6 @@ const PageMore = ({ data }) => {
     <SiteLayout selectedMenuItem={car.car_brand.slug}>
       <SEO title={car.model_name} />
 
-      <div style={{
-        'marginBottom': '8px'
-      }}>
-        <Link to={`/${car.car_brand.slug}`}>Каталог {car.car_brand.brand_name}</Link>
-      </div>
-
-      <hr  style={{
-        'marginBottom': '14px'
-      }}/>
-
       <ItemFull car={car} />
 
     </SiteLayout>

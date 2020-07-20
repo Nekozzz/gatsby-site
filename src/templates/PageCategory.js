@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, {useEffect, useState} from "react"
 import {Pagination} from "antd";
 
 import { graphql } from "gatsby"
@@ -89,25 +89,27 @@ const PageCategory = ({ pageContext, data: graphqlData }) => {
     }
   );
 
-  const [forceUpdate, { loading: useLazyQueryLoading, data: useLazyQueryData }] = useLazyQuery(APOLLO_QUERY_CAR_MODEL_UPDATER);
+  const [lazyQuery, { loading: useLazyQueryLoading, data: useLazyQueryData,  error: useLazyQueryError }] = useLazyQuery(APOLLO_QUERY_CAR_MODEL_UPDATER);
 
-  if (!useQueryLoading && !useQueryLoading) {
-    if (Date.parse(pageData.car_model_aggregate.aggregate.max.updated_at) < Date.parse(useQueryData.car_model_aggregate.aggregate.max.updated_at)) {
+  useEffect(() => {
+    if (!useLazyQueryError && !useQueryLoading && !useQueryLoading) {
+      if (Date.parse(pageData.car_model_aggregate.aggregate.max.updated_at) < Date.parse(useQueryData.car_model_aggregate.aggregate.max.updated_at)) {
 
-      if (!useLazyQueryLoading && !useLazyQueryData) {
-        forceUpdate({
-          variables: {
-            car_brand_id: pageContext.car_brand_id,
-          },
-          fetchPolicy: "cache-first"
-        })
-      }
+        if (!useLazyQueryLoading && !useLazyQueryData) {
+          lazyQuery({
+            variables: {
+              car_brand_id: pageContext.car_brand_id,
+            },
+            fetchPolicy: "cache-first"
+          })
+        }
 
-      if (!useLazyQueryLoading && useLazyQueryData) {
-        setPageData(useLazyQueryData);
+        if (!useLazyQueryLoading && useLazyQueryData) {
+          setPageData(useLazyQueryData);
+        }
       }
     }
-  }
+  })
 
   return (
     <SiteLayout selectedMenuItem={pageData.car_model[0].car_brand.slug}>

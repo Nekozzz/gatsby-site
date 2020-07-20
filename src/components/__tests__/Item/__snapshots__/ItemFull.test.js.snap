@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ItemFull renders correctly 1`] = `
+<div>
+  <div
+    style={
+      Object {
+        "marginBottom": "8px",
+      }
+    }
+  >
+    <a
+      href="/ford"
+    >
+      Каталог 
+      Ford
+    </a>
+  </div>
+  <hr
+    style={
+      Object {
+        "marginBottom": "14px",
+      }
+    }
+  />
+  <div>
+    <img
+      alt=""
+      className="img-preview"
+      src="http://lorempixel.com/460/230/transport/2/"
+    />
+  </div>
+  <div>
+    Марка: 
+    Ford
+  </div>
+  <div>
+    Модель: 
+    Ford Focus III
+  </div>
+  <div
+    style={
+      Object {
+        "marginTop": "8px",
+      }
+    }
+  >
+    Описание:
+    <div>
+      В сравнении со своим предшественником, Focus-III увеличился в длину на 21 мм
+    </div>
+  </div>
+</div>
+`;

@@ -35,7 +35,6 @@ const NotFoundPage = (page) => {
 
   const [forceUpdate, { loading: useLazyQueryLoading, data: useLazyQueryData }] = useLazyQuery(APOLLO_QUERY_CAR_MODEL);
 
-  console.log('404', page, carBrands);
   const pathNames = page.location.pathname.match(/[a-z-_0-9]+/g);
 
   if (pathNames.length > 1 && carBrands) {

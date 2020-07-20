@@ -26,8 +26,16 @@
     "react-helmet": "^6.1.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.10.5",
+    "@storybook/addon-actions": "^5.3.19",
+    "@storybook/addon-knobs": "^5.3.19",
+    "@storybook/addon-links": "^5.3.19",
+    "@storybook/addons": "^5.3.19",
+    "@storybook/react": "^5.3.19",
     "babel-jest": "^26.1.0",
+    "babel-loader": "^8.1.0",
     "babel-preset-gatsby": "^0.5.2",
+    "babel-preset-react-app": "^9.1.2",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^26.1.0",
     "prettier": "2.0.5",
@@ -44,7 +52,10 @@
     "start": "npm run develop",
     "serve": "gatsby serve",
     "clean": "gatsby clean",
-    "test": "jest"
+    "jest": "jest",
+    "jset-upd": "jest --updateSnapshot",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "repository": {
     "type": "git",

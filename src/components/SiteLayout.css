@@ -621,7 +621,6 @@ pre tt:after {
   }
 }
 
-
 #___gatsby {
   height: 100%;
 }
@@ -637,6 +636,7 @@ pre tt:after {
 }
 
 .img-preview {
+  min-width: 460px;
   min-height: 230px;
   background-color: #e6e6e6;
 }

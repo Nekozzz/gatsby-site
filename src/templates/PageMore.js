@@ -1,5 +1,5 @@
 import React from "react"
-import {graphql, Link} from "gatsby"
+import {graphql} from "gatsby"
 import SiteLayout from "../components/SiteLayout.js"
 import ItemFull from "../components/Item/ItemFull";
 import SEO from "../components/seo"
@@ -27,7 +27,7 @@ const PageMore = ({ data }) => {
 
   return (
     <SiteLayout selectedMenuItem={car.car_brand.slug}>
-      <SEO title={car.model_name} />
+      <SEO title={`Подробно - ${car.model_name}`} />
 
       <ItemFull car={car} />
 

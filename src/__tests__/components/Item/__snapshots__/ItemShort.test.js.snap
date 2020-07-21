@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ItemShort renders correctly 1`] = `
+<div>
+  <div>
+    <img
+      alt=""
+      className="img-preview"
+      src="http://lorempixel.com/460/230/transport/2/"
+    />
+  </div>
+  <div>
+    Марка: 
+    Ford
+  </div>
+  <div>
+    Модель: 
+    Ford Focus III
+  </div>
+  <a
+    href="/ford/ford-focus-iii"
+  >
+    Узнать больше...
+  </a>
+  <hr
+    style={
+      Object {
+        "marginBottom": "24px",
+        "marginTop": "8px",
+      }
+    }
+  />
+</div>
+`;

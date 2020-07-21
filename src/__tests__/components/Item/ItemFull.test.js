@@ -1,6 +1,6 @@
 import React from "react"
 import renderer from "react-test-renderer"
-import ItemFull from "../../Item/ItemFull"
+import ItemFull from "../../../components/Item/ItemFull"
 
 describe("ItemFull", () => {
   test("renders correctly", () => {

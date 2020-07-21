@@ -1,0 +1,207 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PageMore renders correctly 1`] = `
+Array [
+  <header
+    style={
+      Object {
+        "background": "rebeccapurple",
+      }
+    }
+  >
+    <div
+      style={
+        Object {
+          "margin": "0 auto",
+          "maxWidth": 960,
+          "padding": "1.45rem 1.0875rem",
+        }
+      }
+    >
+      <h1
+        style={
+          Object {
+            "margin": 0,
+          }
+        }
+      >
+        <a
+          href="/"
+          style={
+            Object {
+              "color": "white",
+              "textDecoration": "none",
+            }
+          }
+        >
+          asd
+        </a>
+      </h1>
+    </div>
+  </header>,
+  <main
+    className="main-container"
+  >
+    <section
+      className="ant-layout ant-layout-has-sider"
+    >
+      <aside
+        className="ant-layout-sider ant-layout-sider-light"
+        style={
+          Object {
+            "flex": "0 0 200px",
+            "maxWidth": "200px",
+            "minWidth": "200px",
+            "width": "200px",
+          }
+        }
+      >
+        <div
+          className="ant-layout-sider-children"
+        >
+          <ul
+            className="ant-menu ant-menu-light ant-menu-root ant-menu-inline"
+            onMouseEnter={[Function]}
+            onTransitionEnd={[Function]}
+            role="menu"
+            style={Object {}}
+          >
+            <li
+              className="ant-menu-item ant-menu-item-only-child"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+              role="menuitem"
+              style={
+                Object {
+                  "paddingLeft": 24,
+                }
+              }
+            >
+              <a
+                href="/"
+              >
+                Главная страница
+              </a>
+            </li>
+            <li
+              className="ant-menu-item ant-menu-item-only-child"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+              role="menuitem"
+              style={
+                Object {
+                  "display": "flex",
+                  "flexDirection": "column",
+                  "paddingLeft": 24,
+                }
+              }
+            >
+              <a
+                href="/adidas"
+              >
+                Adiads
+              </a>
+            </li>
+            <li
+              className="ant-menu-item ant-menu-item-only-child"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+              role="menuitem"
+              style={
+                Object {
+                  "display": "flex",
+                  "flexDirection": "column",
+                  "paddingLeft": 24,
+                }
+              }
+            >
+              <a
+                href="/cat"
+              >
+                Cat man
+              </a>
+            </li>
+          </ul>
+        </div>
+      </aside>
+      <section
+        className="ant-layout site-layout"
+      >
+        <main
+          className="ant-layout-content"
+          style={
+            Object {
+              "margin": "24px 16px",
+              "minHeight": 280,
+              "padding": 24,
+            }
+          }
+        >
+          <div>
+            <div
+              style={
+                Object {
+                  "marginBottom": "8px",
+                }
+              }
+            >
+              <a
+                href="/bmw"
+              >
+                Каталог 
+                BMW
+              </a>
+            </div>
+            <hr
+              style={
+                Object {
+                  "marginBottom": "14px",
+                }
+              }
+            />
+            <div>
+              <img
+                alt=""
+                className="img-preview"
+                src="http://lorempixel.com/460/230/transport/3/"
+              />
+            </div>
+            <div>
+              Марка: 
+              BMW
+            </div>
+            <div>
+              Модель: 
+              BMW X5 II 30i
+            </div>
+            <div
+              style={
+                Object {
+                  "marginTop": "8px",
+                }
+              }
+            >
+              Описание:
+              <div />
+            </div>
+          </div>
+        </main>
+      </section>
+    </section>
+  </main>,
+  <footer>
+    © 
+    2020
+    , Built with
+     
+    <a
+      href="https://www.gatsbyjs.org"
+    >
+      Gatsby
+    </a>
+  </footer>,
+]
+`;

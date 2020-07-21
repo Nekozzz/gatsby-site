@@ -17,7 +17,7 @@ const { Sider, Content } = Layout;
 
 const SiteLayout = ({ children, selectedMenuItem = 'main'}) => {
   const data = useStaticQuery(graphql`
-    query Asm {
+    query SiteLayout {
       site {
         siteMetadata {
           title

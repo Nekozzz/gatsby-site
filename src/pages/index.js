@@ -79,7 +79,7 @@ const PageCategory = ({ pageContext, data: graphqlData }) => {
     setPaginationCurrent(num);
   };
 
-  const {data: useQueryData, loading: useQueryLoading} = useQuery(
+  const {data: useQueryData, loading: useQueryLoading,  error: useQueryError } = useQuery(
     APOLLO_QUERY_CAR_MODEL_LAST_UPDATE,
     {
       variables: {
@@ -89,28 +89,26 @@ const PageCategory = ({ pageContext, data: graphqlData }) => {
     }
   );
 
-  const [lazyQuery, { loading: useLazyQueryLoading, data: useLazyQueryData,  error: useLazyQueryError}] = useLazyQuery(APOLLO_QUERY_CAR_MODEL_UPDATER);
+  const [lazyQuery, { data: useLazyQueryData, loading: useLazyQueryLoading,  error: useLazyQueryError }] = useLazyQuery(APOLLO_QUERY_CAR_MODEL_UPDATER);
   //console.log('force', {useLazyQueryLoading, useLazyQueryData, useLazyQueryError})
 
   useEffect(() => {
-    if (!useLazyQueryError && !useQueryLoading && !useQueryLoading) {
-      if (+new Date(pageData.car_model_aggregate.aggregate.max.updated_at) < +new Date(useQueryData.car_model_aggregate.aggregate.max.updated_at)) {
-
-        if (!useLazyQueryLoading && !useLazyQueryData) {
-          lazyQuery({
-            variables: {
-              car_brand_id: pageContext.car_brand_id,
-            },
-            fetchPolicy: "cache-first"
-          })
-        }
-
-        if (!useLazyQueryLoading && useLazyQueryData) {
-          setPageData(useLazyQueryData);
-        }
+    if (useQueryError || useLazyQueryError) {
+      console.error('useQueryError:', {useQueryError, useLazyQueryError});
+    }
+    else if (useQueryData && +new Date(pageData.car_model_aggregate.aggregate.max.updated_at) < +new Date(useQueryData.car_model_aggregate.aggregate.max.updated_at)) {
+      if (!useLazyQueryData) {
+        lazyQuery({
+          variables: {
+            car_brand_id: pageContext.car_brand_id,
+          },
+          fetchPolicy: "cache-first"
+        })
+      } else {
+        setPageData(useLazyQueryData);
       }
     }
-  });
+  }, [useQueryLoading, useLazyQueryLoading, useLazyQueryData])
 
   return (
     <SiteLayout>

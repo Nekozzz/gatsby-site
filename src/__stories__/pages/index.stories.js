@@ -1,6 +1,8 @@
 import React from 'react';
 import { action } from '@storybook/addon-actions';
 import { withKnobs, text, boolean, number } from "@storybook/addon-knobs";
+import { ApolloProvider } from '@apollo/react-hooks';
+import { client } from '../../apollo/client';
 
 import IndexPage from '../../pages/index';
 
@@ -94,12 +96,12 @@ const pageContext = {
   car_brand_id: 5
 }
 
-import { ApolloProvider } from '@apollo/react-hooks';
-import { client } from '../../apollo/client';
-
-
 export const Main = () => (
   <ApolloProvider client={client}>
     <IndexPage pageContext={pageContext} data={pageData} />
   </ApolloProvider>
 );
+
+
+
+

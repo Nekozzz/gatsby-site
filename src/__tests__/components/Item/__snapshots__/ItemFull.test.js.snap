@@ -2,6 +2,7 @@
 
 exports[`ItemFull renders correctly 1`] = `
 <div>
+  asd
   <div
     style={
       Object {

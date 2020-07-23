@@ -2,7 +2,7 @@ module.exports = {
   // You will want to change this to wherever your Stories will live.
   stories: [
       "../stories/**/*.stories.js",
-      "../src/components/__stories__/**/*.stories.js"
+      "../src/__stories__/**/*.stories.js"
   ],
   addons: [
     "@storybook/addon-actions",

@@ -56,7 +56,7 @@ describe("IndexPage", () => {
       car_brand_id: 5
     }
 
-    const graphqlData = {
+    const pageData = {
       hasura: {
         "car_model": [
           {
@@ -140,7 +140,7 @@ describe("IndexPage", () => {
       root = create(
         <PageCategory
           pageContext={pageContext}
-          data={graphqlData}
+          data={pageData}
         />
       );
     });
